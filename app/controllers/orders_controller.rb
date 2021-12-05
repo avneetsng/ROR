@@ -7,6 +7,8 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails6 for more book information.
 #---
 class OrdersController < ApplicationController
+  skip_before_action :authorize, only: [:new, :create]
+  
   include CurrentCart
   before_action :set_cart, only: [:new, :create]
   before_action :ensure_cart_isnt_empty, only: :new

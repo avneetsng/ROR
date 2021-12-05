@@ -6,12 +6,8 @@
 # We make no guarantees that this code is fit for any purpose.
 # Visit http://www.pragmaticprogrammer.com/titles/rails6 for more book information.
 #---
-class StoreController < ApplicationController
-  skip_before_action :authorize
-  
-  include CurrentCart
-  before_action :set_cart
+class AdminController < ApplicationController
   def index
-    @products = Product.order(:title)
+    @total_orders = Order.count
   end
 end
