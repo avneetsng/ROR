@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_09_052832) do
+ActiveRecord::Schema.define(version: 2021_12_10_063028) do
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2021_12_09_052832) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "enabled", default: false
-    t.decimal "discount_price"
+    t.decimal "discount_price", precision: 8, scale: 2
     t.string "permalink"
   end
 
