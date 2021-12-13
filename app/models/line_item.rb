@@ -7,6 +7,8 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails6 for more book information.
 #---
 class LineItem < ApplicationRecord
+  validates :product_id, uniqueness: { scope: :cart_id }
+  # validates :cart_id, uniqueness: { scope: product_id }
   belongs_to :order, optional: true
   belongs_to :product
   belongs_to :cart, optional: true
