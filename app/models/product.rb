@@ -22,7 +22,21 @@ class ImageUrlValidator < ActiveModel::EachValidator
   end
 end
 class Product < ApplicationRecord
+  # CALLBACKS
+  before_validation :providing_default_value_to_title, :providing_default_discount_price
+  def providing_default_value_to_title
+    if title.nil?
+      self.title = 'abc'
+    end
+  end
 
+  def providing_default_discount_price
+    if discount_price.nil?
+      self.discount_price = price
+    end
+  end
+
+# VALIDATIONS
     has_many :line_items
     has_many  :orders, through: :line_items
     before_destroy :ensure_not_referenced_by_any_line_item
