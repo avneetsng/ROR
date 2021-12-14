@@ -31,6 +31,22 @@
     <%= form.text_field :price %>
   </div>
 
+  <div class="checkbox">
+    <%= label_tag(:enabled, "enabled") %>
+    <%= check_box_tag(:enabled) %>
+
+  </div>
+
+  <div class="field">
+    <%= form.label :discount_price %>
+    <%= form.text_field :discount_price %>
+  </div>
+
+  <div class="field">
+    <%= form.label :permalink %>
+    <%= form.text_field :permalink %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>
