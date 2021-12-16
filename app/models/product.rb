@@ -22,24 +22,17 @@ class ImageUrlValidator < ActiveModel::EachValidator
   end
 end
 class Product < ApplicationRecord
-  # CALLBACKS
-  before_validation :providing_default_value_to_title, :providing_default_discount_price
-  def providing_default_value_to_title
-    if title.nil?
-      self.title = 'abc'
-    end
-  end
+    # CALLBACKS
+    
+    before_validation :providing_default_value_to_title, :providing_default_discount_price
+    before_destroy :ensure_not_referenced_by_any_line_item
 
-  def providing_default_discount_price
-    if discount_price.nil?
-      self.discount_price = price
-    end
-  end
+    # ASSOCIATION
 
-# VALIDATIONS
     has_many :line_items
     has_many  :orders, through: :line_items
-    before_destroy :ensure_not_referenced_by_any_line_item
+
+    # VALIDATIONS
 
     validates :title, :description, :image_url, presence: true
     validates :price, numericality: { greater_than_or_equal_to: 0.01 }, unless: Proc.new { |product| product.price.nil? }
@@ -61,13 +54,25 @@ class Product < ApplicationRecord
       end
     end
 
-    def price_must_be_greater_than_discount_price
-      if price < discount_price
-        errors.add(:price, "Price must be more than the discounted price")
-      end
-    end
-
   private
+
+  def price_must_be_greater_than_discount_price
+    if price < discount_price
+      errors.add(:price, "Price must be more than the discounted price")
+    end
+  end
+
+  def providing_default_value_to_title
+    if title.nil?
+      self.title = 'abc'
+    end
+  end
+
+  def providing_default_discount_price
+    if discount_price.nil?
+      self.discount_price = price
+    end
+  end
 # ensure that there are no line items referencing this product
     def ensure_not_referenced_by_any_line_item
         unless line_items.empty?
