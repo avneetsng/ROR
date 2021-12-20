@@ -1,11 +1,3 @@
-# class PriceValidator < ActiveModel::EachValidator
-#   def validate_each(record, attribute, value)
-#     if record.value < record.discount_price
-#       record.errors.add attribute, "Price must be more than the discounted price"
-#     end
-#   end
-# end
-
 class PriceAndDiscountedPriceComparisonValidator < ActiveModel::Validator
   def validate(record)
     if record.price < record.discount_price
@@ -21,11 +13,13 @@ class ImageUrlValidator < ActiveModel::EachValidator
     end
   end
 end
+
 class Product < ApplicationRecord
 
-    has_many :line_items
-    has_many  :orders, through: :line_items
-    before_destroy :ensure_not_referenced_by_any_line_item
+    has_many :line_items, dependent: :restrict_with_error
+    has_many :orders, through: :line_items
+    has_many :carts, through: :line_items
+    # before_destroy :ensure_not_referenced_by_any_line_item
 
     validates :title, :description, :image_url, presence: true
     validates :price, numericality: { greater_than_or_equal_to: 0.01 }, unless: Proc.new { |product| product.price.nil? }
