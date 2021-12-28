@@ -14,11 +14,21 @@ class Order < ApplicationRecord
     "Credit card"    => 1,
     "Purchase order" => 2
   }
+
   has_many :line_items, dependent: :destroy
-  belongs_to :user 
+  belongs_to :user
   # ...
   validates :name, :address, :email, presence: true
   validates :pay_type, inclusion: pay_types.keys
+
+  before_validation :update_placed_date
+
+  scope :by_date, ->(from = Date.current, to = Date.current) { where("placed >= :from and placed <= :to",from: from, to: to) }
+
+  def update_placed_date
+    self.placed = Date.current
+  end
+
   def add_line_items_from_cart(cart)
     cart.line_items.each do |item|
       item.cart_id = nil

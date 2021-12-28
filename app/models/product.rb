@@ -15,10 +15,15 @@ class ImageUrlValidator < ActiveModel::EachValidator
 end
 
 class Product < ApplicationRecord
+    scope :enabled_products, -> { where(enabled: true) }
 
     has_many :line_items, dependent: :restrict_with_error
     has_many :orders, through: :line_items
     has_many :carts, through: :line_items
+    # has_one :category
+    # has_one :sub_category, through: :category
+    belongs_to :category
+    belongs_to :sub_category, optional: true
     # before_destroy :ensure_not_referenced_by_any_line_item
 
     validates :title, :description, :image_url, presence: true
