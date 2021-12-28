@@ -7,33 +7,34 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails6 for more book information.
 #---
 class User < ApplicationRecord
+  ADMIN_EMAIL = 'admin@depot.com'
   validates :name, presence: true, uniqueness: true
   validates :email, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  has_secure_password
+  # has_secure_password
 
   after_destroy :ensure_an_admin_remains
-  before_destroy :email_verification_check_for_destroy
-  before_update :email_verification_check_for_update
+  before_destroy :cant_delete_admin, if: :admin?
+  before_update :cant_update_admin, if: :admin?
 
   class Error < StandardError
   end
 
   private
+    def admin?
+      self.email == ADMIN_EMAIL
+    end
+
     def ensure_an_admin_remains
       if User.count.zero?
         raise Error.new "Can't delete last user"
       end
     end
 
-    def email_verification_check_for_destroy
-      if email == 'admin@depot.com'
+    def cant_delete_admin
         raise Error.new "Can't delete the Admin"
-      end
     end
 
-    def email_verification_check_for_update
-      if email == 'admin@depot.com'
+    def cant_update_admin
         raise Error.new "Can't update the details of Admin"
-      end
     end
 end
