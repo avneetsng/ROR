@@ -41,13 +41,17 @@ class Product < ApplicationRecord
       end
     end
 
-    def price_must_be_greater_than_discount_price
-      if price < discount_price
-        errors.add(:price, "Price must be more than the discounted price")
-      end
-    end
+    #SCOPES
+    scope :enabled_products, -> { where enabled: true }
 
   private
+
+  def price_must_be_greater_than_discount_price
+    if price < discount_price
+      errors.add(:price, "Price must be more than the discounted price")
+    end
+  end
+
 # ensure that there are no line items referencing this product
     def ensure_not_referenced_by_any_line_item
         unless line_items.empty?
