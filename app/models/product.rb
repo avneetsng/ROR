@@ -15,6 +15,54 @@ class ImageUrlValidator < ActiveModel::EachValidator
 end
 
 class Product < ApplicationRecord
+#EXTRA CAllBACKS
+
+#when Active Record is loaded/initalized with new
+after_initialize -> { puts "After initalized is called on #{self}"}
+
+#When Active Record is loaded from database, called before `after_initalized`
+after_find -> { puts "After find is called"}
+
+#touch updates the updated_at to the current time.
+after_touch -> { puts "After Touch is called" }
+
+before_validation -> { puts "before validation is called"}
+# before_validation -> { raise StandardError.new "BEFORE validate error"}
+
+after_validation -> { puts "after validation is called"}
+# after_validation -> { raise StandardError.new "VALIDATION ERRORrR"; p "AFTER 2VALIDATION CALL"}
+
+before_save -> { puts "Before save is called" }
+
+# around_save -> { puts "around save is called" }
+
+before_create -> {puts "Before create"}
+# around_create -> {puts "around create"}
+after_create -> {puts "after create"}
+# #
+before_update -> {puts "Before update"}
+# around_update -> {puts "around update"}
+after_update -> {puts "after update"}
+# #
+before_destroy -> {puts "before destroy"}
+# around_destroy -> {puts "around Destroy"}
+after_destroy -> { puts "After Destroy"}
+#
+after_save -> {puts "after save"}
+# after_save -> {raise StandardError.new "nahi save karne dunga"}
+#
+after_commit -> {puts "after commit"}
+after_rollback ->{puts "after rollback"}
+# before_destroy -> { raise StandardError.new "MY ERRORRR" }
+
+
+    # CALLBACKS
+
+    after_initialize :provide_default_value_to_title, if: Proc.new { |product| product.title.nil? }
+    before_validation :provide_default_discount_price, if: Proc.new { |product| product.discount_price.nil? }
+    before_destroy :ensure_not_referenced_by_any_line_item
+
+    # ASSOCIATION
 
     has_many :line_items, dependent: :restrict_with_error
     has_many :orders, through: :line_items
@@ -45,6 +93,14 @@ class Product < ApplicationRecord
     scope :enabled_products, -> { where enabled: true }
 
   private
+
+  def provide_default_value_to_title
+      self.title = 'abc'
+  end
+
+  def provide_default_discount_price
+      self.discount_price = price
+  end
 
   def price_must_be_greater_than_discount_price
     if price < discount_price
