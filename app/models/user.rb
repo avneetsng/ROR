@@ -7,6 +7,7 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails6 for more book information.
 #---
 class User < ApplicationRecord
+  
   ADMIN_EMAIL = 'admin@depot.com'
   validates :name, presence: true, uniqueness: true
   validates :email, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -31,10 +32,16 @@ class User < ApplicationRecord
     end
 
     def cant_delete_admin
-        raise Error.new "Can't delete the Admin"
+        # raise Error.new "Can't delete the Admin"
+        puts "You can't delete admin"
+        self.errors.add :base, message: "Can't delete the Admin ;_;"
+        throw :abort
     end
 
     def cant_update_admin
-        raise Error.new "Can't update the details of Admin"
+        # raise Error.new "Can't update the details of Admin"
+        puts "You can't edit admin"
+        self.errors.add :base, "Can't edit the Admin"
+        throw :abort
     end
 end
