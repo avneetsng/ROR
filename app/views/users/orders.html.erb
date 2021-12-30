@@ -1,0 +1,27 @@
+<h1> THIS IS Users/orders </h1>
+
+<p> This is <%= @user.name %> user </p>
+<!-- <p> <%= %> is used to display result, but <% %> only compile the code and don't display it </p>  -->
+
+<h1> ORDERS </h1>
+<% @user.orders.each do |order| %>
+  <li><%= order.name %></li>
+<% end %>
+
+<% @user.orders.each do |order| %>
+  <% total_amount = 0 %>
+  <h2>Line Items for <%= order.name %> order </h2>
+  <p>The total number of line items in the <%= order.name%>
+    order are <%= order.line_items.count %></p>
+
+  <% order.line_items.each do |line_item| %>
+  <p> Line Item <%= line_item.id %></p>
+    <ul>
+      <li>Product ID ->  <%= line_item.product_id %> </li>
+      <li> <%= Product.find(line_item.product_id).title %></li>
+      <li> Cart ID -> <%= line_item.cart_id %> </li>
+    </ul>
+    <% total_amount += line_item.product.price %>
+  <% end %>
+  <p> Total Amount = <%= total_amount %> </p>
+<% end %>
