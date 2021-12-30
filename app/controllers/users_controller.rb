@@ -10,14 +10,12 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def orders
-    # puts "*****************************************************************"
-    # # puts "Hello ORDERS IS RUNNING"
-    # @my_user = User.first.name
-    # print "This is my User's name -->>> ", @my_user, " <<<--"
+    # Hardcoding @user for testing
     @user = User.find(2)
   end
 
   def lineitems
+    # Hardcoding @user for testing 
     @user = User.find(2)
 
   end
