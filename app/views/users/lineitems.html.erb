@@ -1,0 +1,13 @@
+<h1> THIS IS Users/lineitems </h1>
+
+<p> Here is the list of all the LineItems ordered by <%= @user.name %> user </p>
+<% @user.orders.each do |order| %>
+  <% order.line_items.each do |line_item| %>
+  <p> Line Item <%= line_item.id %></p>
+    <ul>
+      <li>Product ID ->  <%= line_item.product_id %> </li>
+      <li> <%= Product.find(line_item.product_id).title %></li>
+      <li> Cart ID -> <%= line_item.cart_id %> </li>
+    </ul>
+  <% end %>
+<% end %>

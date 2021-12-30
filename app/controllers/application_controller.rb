@@ -17,14 +17,14 @@ class ApplicationController < ActionController::Base
 
     def authorize
       if request.format == Mime[:html]
-        @current_user = User.find_by(id: session[:user_id])
-        unless @current_user
-          redirect_to login_url, notice: "Please log in"
+        @user = User.find_by(id: session[:user_id])
+        unless @user
+          # redirect_to login_url, notice: "Please log in"
         end
       else
         authenticate_or_request_with_http_basic do |username, password|
-          user = User.find_by(name: username)
-          user && user.authenticate(password)
+          @user = User.find_by(name: username)
+          @user && @user.authenticate(password)
         end
       end
     end
