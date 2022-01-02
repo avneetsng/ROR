@@ -15,7 +15,8 @@ Rails.application.routes.draw do
   end
   get 'sessions/create'
   get 'sessions/destroy'
-
+  get 'users/orders'
+  get 'users/lineitems'
   resources :users
   resources :products do
     get :who_bought, on: :member

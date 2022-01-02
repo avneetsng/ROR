@@ -9,6 +9,17 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
+  def orders
+    # Hardcoding @user for testing
+    @user = User.find(2)
+  end
+
+  def lineitems
+    # Hardcoding @user for testing 
+    @user = User.find(2)
+
+  end
+
   # GET /users
   # GET /users.json
   def index
