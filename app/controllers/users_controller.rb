@@ -11,13 +11,13 @@ class UsersController < ApplicationController
 
   def orders
     # Hardcoding @user for testing
-    @user = User.find(2)
+    # @user = User.find(2)
   end
 
   def lineitems
-    # Hardcoding @user for testing 
-    @user = User.find(2)
-
+    # Hardcoding @user for testing
+    # @user = User.find(2)
+    # byebug
   end
 
   # GET /users

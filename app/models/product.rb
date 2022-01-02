@@ -61,16 +61,15 @@ after_rollback ->{puts "after rollback"}
     after_initialize :provide_default_value_to_title, if: Proc.new { |product| product.title.nil? }
     before_validation :provide_default_discount_price, if: Proc.new { |product| product.discount_price.nil? }
     before_destroy :ensure_not_referenced_by_any_line_item
-
+    after_create :increment_the_total_products_counter_in_categories
     # ASSOCIATION
 
     has_many :line_items, dependent: :restrict_with_error
     has_many :orders, through: :line_items
     has_many :carts, through: :line_items
-    # has_one :category
-    # has_one :sub_category, through: :category
+
     belongs_to :category
-    belongs_to :sub_category, optional: true
+    # belongs_to :sub_category, optional: true
     # before_destroy :ensure_not_referenced_by_any_line_item
 
     validates :title, :description, :image_url, presence: true
@@ -118,5 +117,14 @@ after_rollback ->{puts "after rollback"}
             errors.add(:base, 'Line Items present')
             throw :abort
         end
+    end
+
+    def increment_the_total_products_counter_in_categories
+      category = Category.find(self.category_id)
+      parent_category= category.parent_category
+
+      category.increment(:total_products).save
+      # Do i alawys need to call save ? after increment?
+      parent_category.increment(:total_products).save if parent_category
     end
 end

@@ -12,7 +12,7 @@ class User < ApplicationRecord
   has_many :orders
   validates :name, presence: true, uniqueness: true
   validates :email, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  # has_secure_password
+  has_secure_password
 
   after_destroy :ensure_an_admin_remains
   before_destroy :cant_delete_admin, if: :admin?
