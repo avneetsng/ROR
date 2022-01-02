@@ -105,6 +105,7 @@ after_rollback ->{puts "after rollback"}
       self.discount_price = price
   end
 
+# Custom validation method
   def price_must_be_greater_than_discount_price
     if price < discount_price
       errors.add(:price, "Price must be more than the discounted price")
