@@ -12,6 +12,7 @@ class Category < ApplicationRecord
 
   #Callbacks
   before_destroy :check_sub_product_count, :check_product_count, prepend: true
+
   #VALIDATIONS
   validates :name, presence: true
   validates :name, uniqueness: {scope: :parent_category_id},
@@ -29,6 +30,7 @@ class Category < ApplicationRecord
       end
     end
   end
+
  # Also could have used total_products Instead of this ;_;
   def check_sub_product_count
     all_sub_products_empty = self.sub_categories.all? do |sub_category|
@@ -48,6 +50,19 @@ class Category < ApplicationRecord
     end
   end
 
+public
 
+  def update_total_products(product)
+    p "Update total products is called "
+    if parent_category_id.present?
+      p "updating the value - TRUE"
+      parent_category = Category.find(parent_category_id)
+      p "parent_category's name is #{parent_category.name} and product count is #{parent_category.total_products}"
+      # parent_category.increment(:total_products).save #-> This won't work because we have set this coulumn as couter_cache
+      # To increment the parent_catergory use the increment_counter method.
+      Category.increment_counter(:total_products, parent_category_id, touch: true)
+      Category.decrement_counter(:total_products, product.category_id_before_last_save, touch: true)
+    end
+  end
 
 end
