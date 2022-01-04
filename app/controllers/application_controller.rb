@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
       if request.format == Mime[:html]
         @user = User.find_by(id: session[:user_id])
         unless @user
-          # redirect_to login_url, notice: "Please log in"
+          redirect_to login_url, notice: "Please log in"
         end
       else
         authenticate_or_request_with_http_basic do |username, password|

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_29_113741) do
+ActiveRecord::Schema.define(version: 2021_12_31_093735) do
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -22,6 +22,9 @@ ActiveRecord::Schema.define(version: 2021_12_29_113741) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
+    t.integer "parent_category_id"
+    t.integer "total_products", default: 0
+    t.index ["parent_category_id"], name: "index_categories_on_parent_category_id"
   end
 
   create_table "line_items", force: :cascade do |t|
@@ -59,9 +62,7 @@ ActiveRecord::Schema.define(version: 2021_12_29_113741) do
     t.decimal "discount_price", precision: 8, scale: 2
     t.string "permalink"
     t.integer "category_id"
-    t.integer "sub_category_id"
     t.index ["category_id"], name: "index_products_on_category_id"
-    t.index ["sub_category_id"], name: "index_products_on_sub_category_id"
   end
 
   create_table "sub_categories", force: :cascade do |t|
@@ -81,11 +82,11 @@ ActiveRecord::Schema.define(version: 2021_12_29_113741) do
     t.string "string"
   end
 
+  add_foreign_key "categories", "categories", column: "parent_category_id"
   add_foreign_key "line_items", "carts"
   add_foreign_key "line_items", "orders"
   add_foreign_key "line_items", "products"
   add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
-  add_foreign_key "products", "sub_categories"
   add_foreign_key "sub_categories", "categories"
 end

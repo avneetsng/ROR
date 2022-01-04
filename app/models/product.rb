@@ -16,7 +16,7 @@ end
 
 class Product < ApplicationRecord
 #EXTRA CAllBACKS
-
+scope :enabled_products, -> { where(enabled: true) }
 #when Active Record is loaded/initalized with new
 after_initialize -> { puts "After initalized is called on #{self}"}
 
@@ -40,7 +40,7 @@ before_create -> {puts "Before create"}
 # around_create -> {puts "around create"}
 after_create -> {puts "after create"}
 # #
-before_update -> {puts "Before update"}
+before_update -> {puts "Before update", self.category_id }
 # around_update -> {puts "around update"}
 after_update -> {puts "after update"}
 # #
@@ -61,13 +61,15 @@ after_rollback ->{puts "after rollback"}
     after_initialize :provide_default_value_to_title, if: Proc.new { |product| product.title.nil? }
     before_validation :provide_default_discount_price, if: Proc.new { |product| product.discount_price.nil? }
     before_destroy :ensure_not_referenced_by_any_line_item
-
+    after_save :update_the_total_products_counter_in_categories, if: ->(product) { product.saved_change_to_category_id? }
     # ASSOCIATION
 
     has_many :line_items, dependent: :restrict_with_error
     has_many :orders, through: :line_items
     has_many :carts, through: :line_items
-    # before_destroy :ensure_not_referenced_by_any_line_item
+
+    belongs_to :category, counter_cache: :total_products
+    #unable to update total_products for parent_category if using counter_cache.
 
     validates :title, :description, :image_url, presence: true
     validates :price, numericality: { greater_than_or_equal_to: 0.01 }, unless: Proc.new { |product| product.price.nil? }
@@ -102,6 +104,7 @@ after_rollback ->{puts "after rollback"}
       self.discount_price = price
   end
 
+# Custom validation method
   def price_must_be_greater_than_discount_price
     if price < discount_price
       errors.add(:price, "Price must be more than the discounted price")
@@ -114,5 +117,18 @@ after_rollback ->{puts "after rollback"}
             errors.add(:base, 'Line Items present')
             throw :abort
         end
+    end
+
+    def update_the_total_products_counter_in_categories
+
+      category = Category.find_by_id(category_id)
+      category.update_total_products(self) if category.present?
+
+
+      # parent_category= category.parent_category
+      #
+      # category.increment(:total_products).save
+      # # Do i alawys need to call save ? after increment?
+      # parent_category.increment(:total_products).save if parent_category
     end
 end

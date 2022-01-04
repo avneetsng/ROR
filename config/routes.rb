@@ -20,7 +20,11 @@ Rails.application.routes.draw do
   resources :users
   resources :products do
     get :who_bought, on: :member
+    get :most_popular, on: :collection
   end
+
+  # "/products/most_popular"
+  # "/products/:id/who_bought"
 
   scope '(:locale)' do
     resources :orders
